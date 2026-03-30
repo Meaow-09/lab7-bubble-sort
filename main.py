@@ -1,3 +1,4 @@
+import sys
 import time
 import os
 
@@ -7,7 +8,13 @@ def clear_terminal() -> None:
     TODO: Clear the terminal screen for in-place animation.
     Hint: Use ANSI escape code '\033[2J\033[H' or os.system('clear').
     """
-    pass
+    if sys.stdout.isatty():
+        if os.name == "nt":
+            os.system("cls")
+        elif os.getenv("TERM"):
+            os.system("clear")
+
+    # NOT WORKING !!!
 
 
 def render_bar_chart(arr: list) -> str:
@@ -20,10 +27,13 @@ def render_bar_chart(arr: list) -> str:
     
     Hint: Normalize each number to a width (e.g., arr[i] // max(arr) * 20 chars)
     """
-    pass
+    for i in arr:
+        for _ in range(i):
+            print('█', end='')
+        print()
 
 
-def visualize_step(arr: list, delay: float = 0.1) -> None:
+def visualize_step(arr: list, operation: str, delay: float = 0.1) -> None:
     """
     TODO: Display current array state with animation.
     Args:
@@ -32,10 +42,13 @@ def visualize_step(arr: list, delay: float = 0.1) -> None:
     
     Hint: Call clear_terminal(), render_bar_chart(), print result, then time.sleep(delay)
     """
-    pass
+    clear_terminal()
+    print(operation)
+    render_bar_chart(arr)
+    time.sleep(delay)
 
 
-def bubble_sort(arr : list) -> list:
+def bubble_sort(arr: list, visualize=False, delay=0.1) -> list:
     """
     Sorts an array in-place using bubble sort with real-time animation.
     
@@ -48,10 +61,14 @@ def bubble_sort(arr : list) -> list:
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 swapped = True
                 # TODO: Call visualize_step(arr) here to animate each swap
+                if visualize:
+                    op = 'Swapping arr[' + str(i) + '] and arr[' + str(i + 1) + ']'
+                    visualize_step(arr, op, delay)
         if not swapped:
             break
     return arr
 
+
 if __name__ == '__main__':
     a = [8, 2, 5, 6, 7, 0, 9]
-    print(bubble_sort(a))
+    bubble_sort(a, True, 0.5)
